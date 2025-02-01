@@ -1,11 +1,17 @@
 # app/__init__.py
 from flask import Flask
+from flask_cors import CORS
 from app.config import Config
 from app.extensions import db, jwt, swagger
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+
+    # Habilita CORS para todo o aplicativo
+    # Se quiser restringir apenas para http://127.0.0.1:3000, use:
+    # CORS(app, resources={r"/*": {"origins": "http://127.0.0.1:3000"}})
+    CORS(app)
 
     # Inicializa as extensões
     db.init_app(app)
