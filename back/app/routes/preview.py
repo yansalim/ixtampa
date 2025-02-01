@@ -1,5 +1,6 @@
 # app/routes/preview.py
 from flask import Blueprint, request, jsonify
+from app.utils.image_processing import process_image  # Importe a função de processamento
 
 preview_bp = Blueprint('preview', __name__)
 
@@ -34,6 +35,12 @@ def generate_preview():
     if not data or 'image_url' not in data or 'clothing_template' not in data:
         return jsonify({'error': 'Dados insuficientes. Informe image_url e clothing_template.'}), 400
 
-    # Aqui você pode chamar uma função de processamento de imagem
-    preview_url = "https://exemplo.com/preview_placeholder.png"
-    return jsonify({'preview_url': preview_url}), 200
+    # Chama a função que processa a imagem
+    processed_path = process_image(data['image_url'], data['clothing_template'])
+
+    # Se quiser, você pode checar se a função retornou algum erro em forma de string
+    if processed_path.startswith("Erro"):
+        return jsonify({'error': processed_path}), 500
+
+    # Retorna o caminho (ou URL) do arquivo processado
+    return jsonify({'preview_url': processed_path}), 200
